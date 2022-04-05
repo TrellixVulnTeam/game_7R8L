@@ -1,0 +1,59 @@
+// Played around with combining 2 delay values, in this case, according to the X and Y position on the grid.
+// You can play with these values to get different results.
+
+$XdelayFactor : 0.3;
+$YdelayFactor: 0.2;
+
+// -----------------------------------------------------------------------
+
+$dotSize: 12px;
+$gridSize: 24px;
+
+*, *::before, *::after {
+  padding: 0;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #111;
+  color: #fff;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.dots {
+  display: grid;
+  grid-template-columns: repeat(20, $gridSize);
+  grid-template-rows: repeat(20, $gridSize);
+  place-items: center;
+}
+
+.dot {
+  width: $dotSize; height: $dotSize;
+  background-color: hsl(var(--hue), 90%, 70%);
+  border-radius: 50%;
+  animation: dot 24s calc(var(--delay1, 0s) + var(--delay2, 0s)) infinite ease-in-out;
+
+  @keyframes dot {
+    from { transform: rotate(0deg) translateX($gridSize); }
+    to { transform: rotate(1440deg) translateX($gridSize); }
+  }
+
+  @for $i from 0 to 400 {
+    &:nth-child(#{$i + 1}) {
+      --hue: #{random() * 360};
+      // --hue: #{360 / 400 * $i};
+    }
+  }
+
+  @for $i from 0 to 20 {
+    &:nth-child(20n + #{$i + 1}) {
+      --delay1: #{$i * $XdelayFactor * -1s};
+    }
+    &:nth-child(n + #{20 * $i + 1}):nth-child(-n + #{20 * ($i + 1)}) {
+      --delay2: #{$i * $YdelayFactor * -1s};
+    }
+  }
+}
